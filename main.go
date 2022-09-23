@@ -50,7 +50,10 @@ func saveText(err chan<- error, bytes <-chan []byte, done chan<- struct{}) {
 
 	fmt.Printf("Creating the file %q. Please, wait...\n", filename)
 	f, openErr := os.Create(filename)
-	err <- openErr
+	if openErr != nil {
+		err <- openErr
+		return // явно выходим из функции, чтобы последующий код не выполнился
+	}
 
 	for s := range bytes {
 		_, err := f.Write(s)
